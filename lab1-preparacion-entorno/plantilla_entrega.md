@@ -1,10 +1,10 @@
 # Reporte de Entrega - Laboratorio 1: Preparación del Entorno Linux
 
-* **Estudiante:** [Nombre Completo]
-* **Cédula / ID:** [Número de Identificación]
+* **Estudiante:** [Carlos Robles]
+* **Cédula / ID:** [4-815-1807]
 * **Curso:** Sistemas Operativos
-* **Fecha:** [DD/MM/AAAA]
-* **Método Utilizado:** [Terraform / Vagrant]
+* **Fecha:** [30/08/2026]
+* **Método Utilizado:** [Vagrant]
 * **Enlace al Repositorio:** [URL de su Fork o Repositorio]
 
 ---
