@@ -1,0 +1,7 @@
++ echo '=== 0. Reiniciar contenedor limpio ==='
+=== 0. Reiniciar contenedor limpio ===
++ docker rm -f reto1_app
+reto1_app
++ docker run -d --name reto1_app --restart no -p 5001:5000 --memory=256m --memory-swap=256m --cpus=1 app-reto1-oom:v1
+WARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.
+d2944882a2bc7b3a5a766903fae5a5aae348e484be7f2fe6afbb999331741762
