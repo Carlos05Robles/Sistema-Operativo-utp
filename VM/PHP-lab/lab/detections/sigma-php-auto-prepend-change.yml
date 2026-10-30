@@ -1,0 +1,39 @@
+title: PHP auto_prepend_file Modified or Injected
+id: 9098511a-0373-437d-a31a-469930f816a4
+status: experimental
+description: >
+  Detecta cambios en auto_prepend_file mediante php.ini, un archivo
+  .user.ini o una invocacion de PHP con -d. Las variantes "gadget" y "zero"
+  de la cadena real sobrescriben PG(auto_prepend_file) en memoria o en disco
+  para que cada peticion incluya una webshell antes del script legitimo.
+references:
+  - https://www.php.net/manual/en/ini.core.php#ini.auto-prepend-file
+  - https://www.php2shell.com/
+author: php2shell-lab
+date: 2026/10/24
+logsource:
+  product: linux
+detection:
+  selection_config_file:
+    TargetFilename|endswith:
+      - '/php.ini'
+      - '/.user.ini'
+  selection_config_content:
+    Contents|contains: 'auto_prepend_file'
+  selection_cli:
+    CommandLine|contains: 'auto_prepend_file'
+  condition: (selection_config_file and selection_config_content) or selection_cli
+fields:
+  - TargetFilename
+  - Image
+  - CommandLine
+  - User
+falsepositives:
+  - Frameworks y CMS que usan auto_prepend_file de forma legitima
+  - Ajustes de rendimiento o instrumentacion (APM, profiling)
+level: medium
+tags:
+  - attack.t1505.003
+  - attack.t1547.001
+# Nota de despliegue: si tu aplicacion usa auto_prepend_file, cambia esta regla
+# a una allowlist de valores y rutas esperadas.

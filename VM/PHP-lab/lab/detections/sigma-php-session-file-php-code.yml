@@ -1,0 +1,38 @@
+title: PHP Session File Containing PHP Code
+id: af3c8528-2acb-477d-931b-756cfb947de4
+status: experimental
+description: >
+  Detecta la creacion de un archivo de sesion de PHP cuyo contenido incluye
+  codigo PHP. En la cadena real de CVE-2026-109618/619, la variante "zero" y
+  el grooming por Keep-Alive mantienen vivo /tmp/sess_<id> con una webshell
+  para usarlo como auto_prepend_file. En uso normal, un archivo de sesion
+  contiene datos serializados, no etiquetas <?php.
+references:
+  - https://www.php.net/manual/en/session.upload-progress.php
+  - https://www.php2shell.com/
+author: php2shell-lab
+date: 2026/10/24
+logsource:
+  product: linux
+  category: file_event
+detection:
+  selection_path:
+    TargetFilename|startswith: '/tmp/sess_'
+  selection_content:
+    Contents|contains: '<?php'
+  condition: selection_path and selection_content
+fields:
+  - TargetFilename
+  - Image
+  - User
+falsepositives:
+  - Aplicaciones que guardan codigo PHP dentro de la sesion de forma deliberada
+  - session.save_path distinto de /tmp (ajustar la ruta)
+level: high
+tags:
+  - attack.t1505.003
+  - attack.t1190
+  - cwe.824
+# Nota de despliegue: los nombres de campo (`Contents`, `TargetFilename`,
+# `Image`) dependen del pipeline (auditd, Wazuh, OSSEC, Sysmon for Linux).
+# Ajusta la ruta si `session.save_path` no es /tmp.

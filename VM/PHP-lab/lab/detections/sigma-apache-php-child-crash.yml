@@ -1,0 +1,40 @@
+title: Apache mod_php Child Crash and Respawn
+id: 5c7e9a31-8d42-4b6f-a1c3-2e8f7d6b9a50
+status: experimental
+description: >
+  Detecta la caida de un hijo de Apache con mod_php (AH00052, SIGSEGV o
+  "signal 11") y su reemplazo por el proceso padre. En la cadena real el
+  worker muere tras el setup de pDestructor o al escribir en BSS; en el PoC
+  FPM el equivalente es "exited with code 70".
+references:
+  - https://httpd.apache.org/docs/2.4/logs.html
+  - https://www.php2shell.com/
+author: php2shell-lab
+date: 2026/10/24
+logsource:
+  product: apache
+  service: apache
+detection:
+  selection_crash:
+    message|contains:
+      - 'AH00052'
+      - 'exit signal Segmentation fault'
+      - 'signal 11'
+      - 'Segmentation fault'
+  selection_respawn:
+    message|contains:
+      - 'resuming normal operations'
+      - 'caught SIGCHLD'
+  condition: selection_crash
+  timeframe: 60s
+fields:
+  - message
+falsepositives:
+  - Modulos nativos inestables
+  - Extensiones PHP de terceros con bugs propios
+  - Reinicios planificados del servicio
+level: high
+tags:
+  - attack.t1499
+  - attack.t1190
+  - cwe.824

@@ -1,0 +1,42 @@
+title: Webserver User Writing .htaccess
+id: 14a7f45b-8c63-46a9-b9d5-93cb3947a649
+status: experimental
+description: >
+  Detecta la escritura de un archivo .htaccess por parte de un proceso que no
+  es un despliegue legitimo. La variante "htaccess" de la cadena real usa
+  system() para plantar una webshell y un .htaccess que activa
+  auto_prepend_file. El proceso que escribe suele ser www-data a traves de
+  sh/bash/php, no una herramienta de despliegue.
+references:
+  - https://www.php2shell.com/
+  - https://httpd.apache.org/docs/2.4/howto/htaccess.html
+author: php2shell-lab
+date: 2026/10/24
+logsource:
+  product: linux
+  category: file_event
+detection:
+  selection_path:
+    TargetFilename|endswith: '/.htaccess'
+  selection_proc:
+    Image|endswith:
+      - '/sh'
+      - '/bash'
+      - '/dash'
+      - '/php'
+      - '/php-fpm'
+      - '/apache2'
+  condition: selection_path and selection_proc
+fields:
+  - TargetFilename
+  - Image
+  - User
+falsepositives:
+  - Despliegues automatizados que ejecutan scripts shell como www-data
+  - Paneles de administracion que editan .htaccess en caliente
+level: high
+tags:
+  - attack.t1505.003
+  - attack.t1190
+# Nota de despliegue: añade una allowlist de tus herramientas de despliegue
+# (Ansible, Deployer, CI) para reducir falsos positivos.
